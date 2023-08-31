@@ -17,22 +17,20 @@ public class OrderBook {
         long size = Long.parseLong(order[2]);
         String type = order[3];
 
+
         TreeMap<Long, Long> mapToUpdate = type.equals("bid") ? bids : asks;
+        if (size == 0) {
+            mapToUpdate.remove(price);
+            return;
+        }
+
         mapToUpdate.put(price, size);
     }
 
     public String getBest(String type) {
         TreeMap<Long, Long> map = type.equals("best_bid") ? bids : asks;
-
-        long price = 0;
-        long size = 0;
-        for (Map.Entry<Long, Long> entry : map.entrySet()) {
-            price = entry.getKey();
-            size = entry.getValue();
-            if (entry.getValue() != 0) {
-                break;
-            }
-        }
+        long price = map.firstKey();
+        long size = map.get(price);
 
         return price + "," + size;
     }
@@ -69,17 +67,8 @@ public class OrderBook {
     }
 
     public long getBestPrice(String type) {
-        TreeMap<Long, Long> map = type.equals("buy") ? asks : bids;
-
-        long price = 0;
-        for (Map.Entry<Long, Long> entry : map.entrySet()) {
-            price = entry.getKey();
-            if (entry.getValue() != 0) {
-                break;
-            }
-        }
-
-        return price;
+        TreeMap<Long, Long> map = type.equals("sell") ? bids : asks;
+        return map.firstKey();
     }
 }
 
